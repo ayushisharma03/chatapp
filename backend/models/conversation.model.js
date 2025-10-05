@@ -1,19 +1,24 @@
-import mongoose from 'mongoose';
-const conversationSchema=new mongoose.Schema({
-    participants:[    //A list of participants (users in the chat).
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'User',
-        }
-    ],
-    messages:[         //A list of messages exchanged in the conversation.
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'Message',
-            default:[],
-        },
-    ],
-},{timestamps:true});
+import mongoose from "mongoose";
 
-const Conversation=mongoose.model("Conversation",conversationSchema);
+const conversationSchema = new mongoose.Schema(
+	{
+		participants: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
+		messages: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Message",
+				default: [],
+			},
+		],
+	},
+	{ timestamps: true }
+);
+
+const Conversation = mongoose.model("Conversation", conversationSchema);
+
 export default Conversation;

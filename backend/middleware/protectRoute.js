@@ -1,38 +1,33 @@
-import jwt from 'jsonwebtoken'
-import User from '../models/user.model.js';
-// This function is a middleware in Express.js that protects routes by ensuring that only authenticated users can access them. 
-// It does this by verifying a JWT (JSON Web Token) stored in the user's cookies.
+import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 
-const protectRoute = async(req, res, next) => {
-    try {
-        // Get token from cookies
-        const token = req.cookies.jwt;
+const protectRoute = async (req, res, next) => {
+	try {
+		const token = req.cookies.jwt;
 
-        // Check if token exists
-        if (!token) {
-            return res.status(401).json({ error: "Unauthorized - No token provided" });
-        }
+		if (!token) {
+			return res.status(401).json({ error: "Unauthorized - No Token Provided" });
+		}
 
-        // Verify token and decode payload
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        if(!decoded){
-            return res.status(401).json({ error: "Unauthorized -invalid token" });
-        }
-        // Attach user ID to request object
-        const user = await User.findById(decoded.userId).select("-password");
+		if (!decoded) {
+			return res.status(401).json({ error: "Unauthorized - Invalid Token" });
+		}
 
-        if(!user){
-            return res.status(404).json({error:"User not found"});
-        }
+		const user = await User.findById(decoded.userId).select("-password");
 
-        req.user=user
-        // Move to the next middleware or route
-        next();
-    } catch (error) {
-        console.log("Error in protectRoute middleware:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+		if (!user) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		req.user = user;
+
+		next();
+	} catch (error) {
+		console.log("Error in protectRoute middleware: ", error.message);
+		res.status(500).json({ error: "Internal server error" });
+	}
 };
 
 export default protectRoute;
